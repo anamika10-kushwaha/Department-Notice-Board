@@ -20,7 +20,7 @@ function Dashboard() {
 
       <div className="mt-8 bg-white p-6 rounded-xl shadow">
         <h2 className="text-xl font-semibold">
-          Your Department Notice Board
+          Your Department Notice Board appears here
         </h2>
 
         <p className="text-slate-500 mt-2">
