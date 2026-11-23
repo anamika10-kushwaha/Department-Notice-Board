@@ -1,6 +1,6 @@
 import AllNotices from "./pages/student/AllNotices";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-
+import Profile from "./pages/student/Profile";
 import Signup from "./pages/auth/signup";
 import Login from "./pages/auth/Login";
 import Dashboard from "./pages/student/Dashboard";
@@ -26,6 +26,7 @@ function App() {
   path="/student/notices/:id"
   element={<NoticeDetails />}
 />
+<Route path="/student/profile" element={<Profile />} />
       </Routes>
     </BrowserRouter>
   );
