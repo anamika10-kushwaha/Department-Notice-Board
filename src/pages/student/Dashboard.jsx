@@ -1,15 +1,15 @@
 
 import { Link, useNavigate } from "react-router-dom";
 import { notices } from "../../data/notices";
+import StudentSidebar from "../../components/student/StudentSidebar";
+
 import {
-  LayoutDashboard,
   FileText,
   BookOpen,
-  UserRound,
-  LogOut,
   CalendarDays,
   ArrowRight,
   Bell,
+  UserRound,
 } from "lucide-react";
 
 function Dashboard() {
@@ -21,97 +21,36 @@ function Dashboard() {
 
   const name = student?.name || "Student";
   const department = student?.department || "CSE";
-  const academicYear = student?.academicYear || student?.year || "Not specified";
+  const academicYear =
+    student?.academicYear || student?.year || "Not specified";
 
-  // Show department-specific + college-wide notices
+  // Department notices + college-wide notices
   const departmentNotices = notices.filter(
     (notice) =>
       notice.department === department ||
       notice.department === "All"
   );
 
-  // Show latest 5 notices on dashboard
+  // Latest five notices
   const recentNotices = [...departmentNotices]
     .sort((a, b) => new Date(b.date) - new Date(a.date))
     .slice(0, 5);
 
-  // Count department-specific notices only
+  // Department-specific notice count
   const departmentOnlyCount = notices.filter(
     (notice) => notice.department === department
   ).length;
 
-  // Count college-wide notices
+  // College-wide notice count
   const collegeNoticesCount = notices.filter(
     (notice) => notice.department === "All"
   ).length;
 
-  // Logout
-  const handleLogout = () => {
-    localStorage.removeItem("loggedInStudent");
-    navigate("/login");
-  };
-
   return (
     <div className="min-h-screen bg-slate-100 flex flex-col md:flex-row">
 
-      {/* Sidebar */}
-      <aside className="w-full md:w-64 bg-slate-900 text-white md:min-h-screen p-5 flex flex-col">
-        {/* Logo */}
-        <div className="mb-8">
-          <h1 className="text-xl font-bold">
-            Campus Notice Board
-          </h1>
-          <p className="text-slate-400 text-sm mt-1">
-            Student Portal
-          </p>
-        </div>
-
-        {/* Navigation */}
-        <nav className="flex flex-col gap-2">
-          <Link
-            to="/student/dashboard"
-            className="flex items-center gap-3 bg-blue-600 text-white px-4 py-3 rounded-xl"
-          >
-            <LayoutDashboard size={18} />
-            Dashboard
-          </Link>
-
-          <Link
-            to="/student/notices"
-            className="flex items-center gap-3 text-slate-300 hover:bg-slate-800 px-4 py-3 rounded-xl transition"
-          >
-            <FileText size={18} />
-            All Notices
-          </Link>
-
-          <Link
-            to="/student/department"
-            className="flex items-center gap-3 text-slate-300 hover:bg-slate-800 px-4 py-3 rounded-xl transition"
-          >
-            <BookOpen size={18} />
-            Department Notices
-          </Link>
-
-          <Link
-            to="/student/profile"
-            className="flex items-center gap-3 text-slate-300 hover:bg-slate-800 px-4 py-3 rounded-xl transition"
-          >
-            <UserRound size={18} />
-            My Profile
-          </Link>
-        </nav>
-
-        {/* Logout */}
-        <div className="mt-8 md:mt-auto pt-6">
-          <button
-            onClick={handleLogout}
-            className="w-full flex items-center gap-3 text-slate-300 hover:bg-red-500/10 hover:text-red-400 px-4 py-3 rounded-xl transition"
-          >
-            <LogOut size={18} />
-            Logout
-          </button>
-        </div>
-      </aside>
+      {/* Reusable Student Sidebar */}
+      <StudentSidebar />
 
       {/* Main Content */}
       <main className="flex-1 min-w-0 p-5 md:p-8">
@@ -132,7 +71,7 @@ function Dashboard() {
             </p>
           </div>
 
-          {/* Student Info */}
+          {/* Student Information */}
           <div className="bg-white border border-slate-200 rounded-xl px-4 py-3">
             <div className="flex items-center gap-3">
               <div className="bg-blue-100 text-blue-700 p-3 rounded-full">
@@ -143,6 +82,7 @@ function Dashboard() {
                 <p className="font-semibold text-slate-800">
                   {name}
                 </p>
+
                 <p className="text-xs text-slate-500">
                   {department} · Year {academicYear}
                 </p>
@@ -155,6 +95,7 @@ function Dashboard() {
         <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl p-6 md:p-8 text-white mb-8">
           <div className="flex items-center gap-3 mb-3">
             <Bell size={22} />
+
             <span className="text-blue-100 text-sm">
               Your Department Notice Board
             </span>
@@ -187,6 +128,7 @@ function Dashboard() {
                 <p className="text-sm text-slate-500">
                   Notices Available
                 </p>
+
                 <h3 className="text-3xl font-bold text-slate-800 mt-2">
                   {departmentNotices.length}
                 </h3>
@@ -205,6 +147,7 @@ function Dashboard() {
                 <p className="text-sm text-slate-500">
                   Department Notices
                 </p>
+
                 <h3 className="text-3xl font-bold text-slate-800 mt-2">
                   {departmentOnlyCount}
                 </h3>
@@ -223,6 +166,7 @@ function Dashboard() {
                 <p className="text-sm text-slate-500">
                   College-wide Notices
                 </p>
+
                 <h3 className="text-3xl font-bold text-slate-800 mt-2">
                   {collegeNoticesCount}
                 </h3>
@@ -233,9 +177,10 @@ function Dashboard() {
               </div>
             </div>
           </div>
+
         </div>
 
-        {/* Department Notice Board */}
+        {/* Latest Department Notices */}
         <div className="bg-white rounded-2xl border border-slate-200 p-5 md:p-6">
 
           {/* Section Header */}
@@ -254,11 +199,12 @@ function Dashboard() {
               to="/student/notices"
               className="text-blue-600 text-sm font-medium hover:text-blue-800"
             >
-              View All Notices <ArrowRight size={16} className="inline ml-1" />
+              View All Notices
+              <ArrowRight size={16} className="inline ml-1" />
             </Link>
           </div>
 
-          {/* Notice List */}
+          {/* Notice Cards */}
           <div className="grid gap-4">
             {recentNotices.map((notice) => (
               <Link
@@ -266,7 +212,6 @@ function Dashboard() {
                 key={notice.id}
                 className="block border border-slate-200 rounded-xl p-4 hover:border-blue-300 hover:shadow-sm transition"
               >
-                {/* Badges */}
                 <div className="flex flex-wrap gap-2 mb-3">
                   <span className="bg-blue-50 text-blue-700 text-xs px-3 py-1 rounded-full">
                     {notice.category}
@@ -285,17 +230,14 @@ function Dashboard() {
                   )}
                 </div>
 
-                {/* Title */}
                 <h3 className="font-semibold text-slate-800">
                   {notice.title}
                 </h3>
 
-                {/* Description */}
                 <p className="text-sm text-slate-500 mt-2 leading-6">
                   {notice.description}
                 </p>
 
-                {/* Date */}
                 <div className="flex items-center gap-2 text-xs text-slate-400 mt-4">
                   <CalendarDays size={15} />
                   {notice.date}
@@ -327,6 +269,7 @@ function Dashboard() {
             View Department Notices
             <ArrowRight size={16} />
           </Link>
+
         </div>
 
       </main>
