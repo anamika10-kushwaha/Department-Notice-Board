@@ -1,7 +1,7 @@
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { notices } from "../../data/notices";
+import { getStoredNotices } from "../../data/noticeStorage";
 import StudentSidebar from "../../components/student/StudentSidebar";
 
 import {
@@ -17,7 +17,22 @@ function DepartmentNotices() {
 
   const department = student?.department || "CSE";
 
+  const [notices, setNotices] = useState([]);
   const [search, setSearch] = useState("");
+
+  useEffect(() => {
+    const loadNotices = () => {
+      setNotices(getStoredNotices());
+    };
+
+    loadNotices();
+
+    window.addEventListener("storage", loadNotices);
+
+    return () => {
+      window.removeEventListener("storage", loadNotices);
+    };
+  }, []);
 
   // Only show notices belonging to the student's department
   const departmentNotices = notices.filter(
@@ -32,10 +47,8 @@ function DepartmentNotices() {
   return (
     <div className="min-h-screen bg-slate-100 flex flex-col md:flex-row">
 
-      {/* Reusable Student Sidebar */}
       <StudentSidebar />
 
-      {/* Main Content */}
       <main className="flex-1 min-w-0 p-5 md:p-8">
         <div className="max-w-6xl mx-auto">
 
@@ -86,7 +99,6 @@ function DepartmentNotices() {
                 key={notice.id}
                 className="block bg-white rounded-2xl border border-slate-200 p-5 hover:border-blue-300 hover:shadow-md transition"
               >
-                {/* Notice Labels */}
                 <div className="flex flex-wrap gap-2 mb-3">
                   <span className="bg-blue-50 text-blue-700 text-xs font-medium px-3 py-1 rounded-full">
                     {notice.category}
@@ -103,17 +115,14 @@ function DepartmentNotices() {
                   )}
                 </div>
 
-                {/* Notice Title */}
                 <h2 className="text-lg font-semibold text-slate-800">
                   {notice.title}
                 </h2>
 
-                {/* Description */}
                 <p className="text-slate-500 text-sm leading-6 mt-2">
                   {notice.description}
                 </p>
 
-                {/* Date */}
                 <div className="flex items-center gap-2 text-xs text-slate-400 mt-4">
                   <CalendarDays size={15} />
                   {notice.date}
@@ -121,7 +130,6 @@ function DepartmentNotices() {
               </Link>
             ))}
 
-            {/* Empty State */}
             {filteredNotices.length === 0 && (
               <div className="bg-white rounded-2xl border border-slate-200 p-10 text-center">
                 <FileText
@@ -134,7 +142,7 @@ function DepartmentNotices() {
                 </h3>
 
                 <p className="text-sm text-slate-500 mt-1">
-                  Try searching with another notice title.
+                  Your department notices will appear here when published.
                 </p>
               </div>
             )}

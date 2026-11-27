@@ -1,6 +1,7 @@
 
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { notices } from "../../data/notices";
+import { getStoredNotices } from "../../data/noticeStorage";
 import StudentSidebar from "../../components/student/StudentSidebar";
 
 import {
@@ -14,6 +15,22 @@ import {
 
 function Dashboard() {
   const navigate = useNavigate();
+
+  const [notices, setNotices] = useState([]);
+
+  useEffect(() => {
+    const loadNotices = () => {
+      setNotices(getStoredNotices());
+    };
+
+    loadNotices();
+
+    window.addEventListener("storage", loadNotices);
+
+    return () => {
+      window.removeEventListener("storage", loadNotices);
+    };
+  }, []);
 
   const student = JSON.parse(
     localStorage.getItem("loggedInStudent") || "null"
@@ -49,10 +66,8 @@ function Dashboard() {
   return (
     <div className="min-h-screen bg-slate-100 flex flex-col md:flex-row">
 
-      {/* Reusable Student Sidebar */}
       <StudentSidebar />
 
-      {/* Main Content */}
       <main className="flex-1 min-w-0 p-5 md:p-8">
 
         {/* Welcome Header */}
@@ -71,7 +86,6 @@ function Dashboard() {
             </p>
           </div>
 
-          {/* Student Information */}
           <div className="bg-white border border-slate-200 rounded-xl px-4 py-3">
             <div className="flex items-center gap-3">
               <div className="bg-blue-100 text-blue-700 p-3 rounded-full">
@@ -95,7 +109,6 @@ function Dashboard() {
         <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl p-6 md:p-8 text-white mb-8">
           <div className="flex items-center gap-3 mb-3">
             <Bell size={22} />
-
             <span className="text-blue-100 text-sm">
               Your Department Notice Board
             </span>
@@ -121,7 +134,6 @@ function Dashboard() {
         {/* Statistics */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-8">
 
-          {/* Total Notices */}
           <div className="bg-white rounded-2xl border border-slate-200 p-5">
             <div className="flex justify-between items-center">
               <div>
@@ -140,7 +152,6 @@ function Dashboard() {
             </div>
           </div>
 
-          {/* Department Notices */}
           <div className="bg-white rounded-2xl border border-slate-200 p-5">
             <div className="flex justify-between items-center">
               <div>
@@ -159,7 +170,6 @@ function Dashboard() {
             </div>
           </div>
 
-          {/* College Notices */}
           <div className="bg-white rounded-2xl border border-slate-200 p-5">
             <div className="flex justify-between items-center">
               <div>
@@ -180,10 +190,9 @@ function Dashboard() {
 
         </div>
 
-        {/* Latest Department Notices */}
+        {/* Latest Notices */}
         <div className="bg-white rounded-2xl border border-slate-200 p-5 md:p-6">
 
-          {/* Section Header */}
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-6">
             <div>
               <h2 className="text-xl font-bold text-slate-800">
@@ -204,7 +213,6 @@ function Dashboard() {
             </Link>
           </div>
 
-          {/* Notice Cards */}
           <div className="grid gap-4">
             {recentNotices.map((notice) => (
               <Link
@@ -245,7 +253,6 @@ function Dashboard() {
               </Link>
             ))}
 
-            {/* Empty State */}
             {recentNotices.length === 0 && (
               <div className="text-center py-10 text-slate-500">
                 <FileText size={36} className="mx-auto mb-3" />
@@ -261,7 +268,6 @@ function Dashboard() {
             )}
           </div>
 
-          {/* Bottom Link */}
           <Link
             to="/student/department"
             className="inline-flex items-center gap-2 mt-6 text-blue-600 font-medium text-sm hover:underline"

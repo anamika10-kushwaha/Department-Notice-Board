@@ -1,7 +1,7 @@
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { notices } from "../../data/notices";
+import { getStoredNotices } from "../../data/noticeStorage";
 import StudentSidebar from "../../components/student/StudentSidebar";
 
 import {
@@ -17,8 +17,23 @@ function AllNotices() {
 
   const department = student?.department || "CSE";
 
+  const [notices, setNotices] = useState([]);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
+
+  useEffect(() => {
+    const loadNotices = () => {
+      setNotices(getStoredNotices());
+    };
+
+    loadNotices();
+
+    window.addEventListener("storage", loadNotices);
+
+    return () => {
+      window.removeEventListener("storage", loadNotices);
+    };
+  }, []);
 
   // Department notices + college-wide notices
   const availableNotices = notices.filter(
@@ -42,10 +57,8 @@ function AllNotices() {
   return (
     <div className="min-h-screen bg-slate-100 flex flex-col md:flex-row">
 
-      {/* Reusable Student Sidebar */}
       <StudentSidebar />
 
-      {/* Main Content */}
       <main className="flex-1 min-w-0 p-5 md:p-8">
         <div className="max-w-6xl mx-auto">
 
@@ -67,7 +80,6 @@ function AllNotices() {
           {/* Search & Category Filter */}
           <div className="bg-white rounded-2xl border border-slate-200 p-5 mb-6 flex flex-col md:flex-row gap-4">
 
-            {/* Search Input */}
             <div className="relative flex-1">
               <Search
                 size={18}
@@ -83,7 +95,6 @@ function AllNotices() {
               />
             </div>
 
-            {/* Category Filter */}
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
@@ -112,7 +123,6 @@ function AllNotices() {
                 key={notice.id}
                 className="block bg-white rounded-2xl border border-slate-200 p-5 hover:border-blue-300 hover:shadow-md transition"
               >
-                {/* Notice Labels */}
                 <div className="flex flex-wrap gap-2 mb-3">
                   <span className="bg-blue-50 text-blue-700 text-xs font-medium px-3 py-1 rounded-full">
                     {notice.category}
@@ -131,17 +141,14 @@ function AllNotices() {
                   )}
                 </div>
 
-                {/* Notice Title */}
                 <h2 className="text-lg font-semibold text-slate-800">
                   {notice.title}
                 </h2>
 
-                {/* Notice Description */}
                 <p className="text-slate-500 text-sm leading-6 mt-2">
                   {notice.description}
                 </p>
 
-                {/* Notice Date */}
                 <div className="flex items-center gap-2 text-xs text-slate-400 mt-4">
                   <CalendarDays size={15} />
                   {notice.date}
@@ -149,7 +156,6 @@ function AllNotices() {
               </Link>
             ))}
 
-            {/* Empty State */}
             {filteredNotices.length === 0 && (
               <div className="bg-white rounded-2xl border border-slate-200 p-10 text-center">
                 <FileText
