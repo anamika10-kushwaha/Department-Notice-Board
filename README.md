@@ -19,7 +19,8 @@ If you are developing a production application, we recommend using TypeScript wi
 
 PROJECT URL: https://department-notice-board-eh7b.onrender.com/
 
-Admin Email: admin@college.com
+```Admin Email: admin@college.com
 Admin Password: admin123
 Student Email: ananyaanuj2006@gmail.com
 Student Password: ananyaagarwal
+```
